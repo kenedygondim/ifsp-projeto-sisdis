@@ -1,0 +1,31 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: notification-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/notification_db
+    username: root
+    password: Kenedy123!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: kenedyal478@gmail.com
+    password: dcob nmrm qnor shjd
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
