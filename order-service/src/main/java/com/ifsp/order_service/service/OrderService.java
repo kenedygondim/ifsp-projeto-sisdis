@@ -33,21 +33,17 @@ public class OrderService {
 
     @Transactional
     public OrderDTO createOrder(CreateOrderRequestDTO request) {
-        // Busca usuário
         User user = userRepository.findById(request.getUsuarioId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Busca produtos do restaurant-service
         List<ProductDTO> products = request.getProdutoIds().stream()
                 .map(this::getProductFromRestaurantService)
                 .collect(Collectors.toList());
 
-        // Calcula valor total
         BigDecimal valorTotal = products.stream()
                 .map(ProductDTO::getValor)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // Cria pedido
         Order order = Order.builder()
                 .usuarioId(user.getId())
                 .status(OrderStatusEnum.CRIADO)
@@ -55,7 +51,6 @@ public class OrderService {
                 .dataCriacao(LocalDateTime.now())
                 .build();
 
-        // Adiciona produtos ao pedido
         products.forEach(p -> {
             OrderProduct op = OrderProduct.builder()
                     .produtoId(p.getId())
@@ -67,7 +62,6 @@ public class OrderService {
 
         Order saved = orderRepository.save(order);
 
-        // Publica evento no RabbitMQ
         publishOrderEvent(saved, user);
 
         return toDTO(saved);
